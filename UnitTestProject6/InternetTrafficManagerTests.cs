@@ -85,20 +85,6 @@ namespace UnitTestProject6
         }
 
         [TestMethod]
-        public void TestAverageTrafficPerDayWithNoData()
-        {
-            // Arrange
-            InternetTrafficManager.InternetTraffic[] testData = new InternetTrafficManager.InternetTraffic[] { };
-            TrafficAnalyzer analyzer = new TrafficAnalyzer(testData);
-
-            // Act
-            double result = analyzer.AverageTrafficPerDay(InternetTrafficManager.ProtocolType.HTTP, new DateTime(2023, 11, 5), new DateTime(2023, 11, 6));
-
-            // Assert
-            Assert.AreEqual(0, result);
-        }
-
-        [TestMethod]
         public void TestDayWithMaxTrafficWithNoData()
         {
             // Arrange

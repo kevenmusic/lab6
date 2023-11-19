@@ -1,18 +1,32 @@
-﻿using System;
+﻿using ClassLibrary6;
+using System;
 using static ClassLibrary6.InternetTrafficManager;
 
 namespace ConsoleApp6
 {
     internal class Program
     {
+        private static void DisplayTrafficData(InternetTraffic[] trafficData)
+        {
+            Console.WriteLine("Отображение введенных данных:");
+            Console.WriteLine("|" + new string('-', 55) + "|");
+            foreach (var data in trafficData)
+            {
+                Console.WriteLine($"| Дата: {data.Date.ToShortDateString()} | Протокол: {data.Protocol, -7} | Трафик: {data.TrafficUsage, -3} МБ |");
+            }
+            Console.WriteLine("|" + new string('-', 55) + "|");
+        }
+
         static void Main(string[] args)
         {
-            InternetTraffic[] trafficData = new InternetTraffic[]
+          InternetTraffic[] trafficData = new InternetTraffic[]
           {
                 new InternetTraffic(new DateTime(2023, 11, 5), ProtocolType.HTTP, 100),
                 new InternetTraffic(new DateTime(2023, 11, 6), ProtocolType.FTP, 50),
                 new InternetTraffic(new DateTime(2023, 11, 6), ProtocolType.HTTP, 200),
                 new InternetTraffic(new DateTime(2023, 11, 20), ProtocolType.Torrent, 250),
+                new InternetTraffic(new DateTime(2023, 10, 20), ProtocolType.Torrent, 120),
+                new InternetTraffic(new DateTime(2023, 7, 10), ProtocolType.IPTV, 120)
           };
 
             TrafficAnalyzer analyzer = new TrafficAnalyzer(trafficData);
@@ -26,7 +40,8 @@ namespace ConsoleApp6
                 Console.WriteLine("|          1. Показать трафик на указанную дату         |");
                 Console.WriteLine("|   2. Показать средний трафик по протоколу за период   |");
                 Console.WriteLine("|   3. Найти день с максимальным трафиком по протоколу  |");
-                Console.WriteLine("|                       4. Выйти                        |");
+                Console.WriteLine("|              4. Вывод заданных протоколов             |");
+                Console.WriteLine("|                       5. Выйти                        |");
                 Console.WriteLine("|-------------------------------------------------------|");
 
 
@@ -35,10 +50,12 @@ namespace ConsoleApp6
                 switch (choice)
                 {
                     case "1":
-                        Console.Write("Введите дату в формате ГГГГ-ММ-ДД: ");
+                        DisplayTrafficData(trafficData);
+                        Console.Write("Введите дату в формате ДД-ММ-ГГГГ: ");
                         try
                         {
                             DateTime specifiedDate = DateTime.Parse(Console.ReadLine());
+                            
                             double totalTraffic = analyzer.TotalTrafficOnDate(specifiedDate);
 
                             if (totalTraffic > 0)
@@ -53,7 +70,7 @@ namespace ConsoleApp6
                         }
                         catch (FormatException)
                         {
-                            Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ГГГГ-ММ-ДД.");
+                            Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ДД-ММ-ГГГГ.");
                         }
 
                         Console.WriteLine("Нажмите Enter для продолжения...");
@@ -62,13 +79,14 @@ namespace ConsoleApp6
                         break;
 
                     case "2":
+                        DisplayTrafficData(trafficData);
                         Console.WriteLine("Введите протокол (HTTP, FTP, Torrent, IPTV): ");
                         string protocolInput = Console.ReadLine();
                         ProtocolType protocol;
 
                         if (Enum.TryParse(protocolInput, true, out protocol))
                         {
-                            Console.WriteLine("Введите начальную дату в формате ГГГГ-ММ-ДД: ");
+                            Console.WriteLine("Введите начальную дату в формате ДД-ММ-ГГГГ: ");
                             DateTime startDate;
 
                             try
@@ -77,14 +95,14 @@ namespace ConsoleApp6
                             }
                             catch (FormatException)
                             {
-                                Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ГГГГ-ММ-ДД.");
+                                Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ДД-ММ-ГГГГ.");
                                 Console.WriteLine("Нажмите Enter для продолжения...");
                                 Console.ReadLine();
                                 Console.Clear();
                                 break;
                             }
 
-                            Console.WriteLine("Введите конечную дату в формате ГГГГ-ММ-ДД: ");
+                            Console.WriteLine("Введите конечную дату в формате ДД-ММ-ГГГГ: ");
                             DateTime endDate;
 
                             try
@@ -93,28 +111,29 @@ namespace ConsoleApp6
                             }
                             catch (FormatException)
                             {
-                                Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ГГГГ-ММ-ДД.");
+                                Console.WriteLine("Некорректный формат даты. Пожалуйста, используйте формат ДД-ММ-ГГГГ.");
                                 Console.WriteLine("Нажмите Enter для продолжения...");
                                 Console.ReadLine();
                                 Console.Clear();
                                 break;
                             }
-
-                            if (endDate < startDate)
+                            double avgTraffic;
+                            try
                             {
-                                Console.WriteLine("Конечная дата не может быть раньше начальной даты. Возврат к предыдущему меню.");
-                                break;
+                               avgTraffic = analyzer.AverageTrafficPerDay(protocol, startDate, endDate);
+
+                               if (avgTraffic > 0)
+                               {
+                                   Console.WriteLine($"Средний трафик за период: {avgTraffic} МБ в день");
+                               }
+                               else
+                               {
+                                   Console.WriteLine($"Данных за указанный период не найдено.");
+                               }
                             }
-
-                            double avgTraffic = analyzer.AverageTrafficPerDay(protocol, startDate, endDate);
-
-                            if (avgTraffic > 0)
+                            catch (InternetTrafficException ex)
                             {
-                                Console.WriteLine($"Средний трафик за период: {avgTraffic} МБ в день");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Данных за указанный период не найдено.");
+                                Console.WriteLine($"Ошибка: {ex.Message}");
                             }
                         }
                         else
@@ -128,6 +147,7 @@ namespace ConsoleApp6
                         break;
 
                     case "3":
+                        DisplayTrafficData(trafficData);
                         Console.Write("Введите протокол (HTTP, FTP, Torrent, IPTV): ");
                         protocolInput = Console.ReadLine();
                         ProtocolType searchProtocol;
@@ -146,8 +166,15 @@ namespace ConsoleApp6
                         Console.ReadLine();
                         Console.Clear();
                         break;
-                            
+
                     case "4":
+                        DisplayTrafficData(trafficData);
+                        Console.WriteLine("Нажмите Enter для продолжения...");
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "5":
                         return;
 
                     default:

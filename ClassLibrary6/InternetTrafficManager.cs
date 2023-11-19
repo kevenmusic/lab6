@@ -100,6 +100,11 @@ namespace ClassLibrary6
                 double avgTraffic = 0;
                 int daysCount = 0;
 
+                if (endDate < startDate)
+                {
+                    throw new InternetTrafficException("Конечная дата не может быть раньше начальной даты.");
+                }
+
                 foreach (InternetTraffic traffic in _trafficData)
                 {
                     if (traffic.Protocol == protocol && traffic.Date >= startDate && traffic.Date <= endDate)
@@ -109,14 +114,7 @@ namespace ClassLibrary6
                     }
                 }
 
-                if (daysCount > 0)
-                {
-                    return avgTraffic / daysCount;
-                }
-                else
-                {
-                    return 0; // Возвращаем 0 в случае отсутствия данных
-                }
+                return avgTraffic / daysCount;
             }
 
             /// <summary>
