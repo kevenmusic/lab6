@@ -23,7 +23,7 @@ namespace ConsoleApp6
           {
                 new InternetTraffic(new DateTime(2023, 11, 5), ProtocolType.HTTP, 100),
                 new InternetTraffic(new DateTime(2023, 11, 6), ProtocolType.FTP, 50),
-                new InternetTraffic(new DateTime(2023, 11, 6), ProtocolType.HTTP, 200),
+                new InternetTraffic(new DateTime(2023, 11, 6    ), ProtocolType.HTTP, 200),
                 new InternetTraffic(new DateTime(2023, 11, 20), ProtocolType.Torrent, 250),
                 new InternetTraffic(new DateTime(2023, 10, 20), ProtocolType.Torrent, 120),
                 new InternetTraffic(new DateTime(2023, 7, 10), ProtocolType.IPTV, 120)
@@ -44,7 +44,6 @@ namespace ConsoleApp6
                 Console.WriteLine("|                       5. Выйти                        |");
                 Console.WriteLine("|-------------------------------------------------------|");
 
-
                 string choice = Console.ReadLine();
 
                 switch (choice)
@@ -61,7 +60,6 @@ namespace ConsoleApp6
                             if (totalTraffic > 0)
                             {
                                 Console.WriteLine($"Израсходовано трафика на дату {specifiedDate.ToShortDateString()}: {totalTraffic} МБ");
-
                             }
                             else
                             {
@@ -82,10 +80,11 @@ namespace ConsoleApp6
                         DisplayTrafficData(trafficData);
                         Console.WriteLine("Введите протокол (HTTP, FTP, Torrent, IPTV): ");
                         string protocolInput = Console.ReadLine();
-                        ProtocolType protocol;
 
-                        if (Enum.TryParse(protocolInput, true, out protocol))
+                        try
                         {
+                            ProtocolType protocol = (ProtocolType)Enum.Parse(typeof(ProtocolType), protocolInput, true);
+
                             Console.WriteLine("Введите начальную дату в формате ДД-ММ-ГГГГ: ");
                             DateTime startDate;
 
@@ -117,26 +116,28 @@ namespace ConsoleApp6
                                 Console.Clear();
                                 break;
                             }
+
                             double avgTraffic;
+
                             try
                             {
-                               avgTraffic = analyzer.AverageTrafficPerDay(protocol, startDate, endDate);
+                                avgTraffic = analyzer.AverageTrafficPerDay(protocol, startDate, endDate);
 
-                               if (avgTraffic > 0)
-                               {
-                                   Console.WriteLine($"Средний трафик за период: {avgTraffic} МБ в день");
-                               }
-                               else
-                               {
-                                   Console.WriteLine($"Данных за указанный период не найдено.");
-                               }
+                                if (avgTraffic > 0)
+                                {
+                                    Console.WriteLine($"Средний трафик за период: {avgTraffic} МБ в день");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Данных за указанный период не найдено.");
+                                }
                             }
                             catch (InternetTrafficException ex)
                             {
                                 Console.WriteLine($"Ошибка: {ex.Message}");
                             }
                         }
-                        else
+                        catch (InternetTrafficException)
                         {
                             Console.WriteLine("Некорректный протокол. Пожалуйста, используйте одно из значений: HTTP, FTP, Torrent, IPTV");
                         }
@@ -150,14 +151,14 @@ namespace ConsoleApp6
                         DisplayTrafficData(trafficData);
                         Console.Write("Введите протокол (HTTP, FTP, Torrent, IPTV): ");
                         protocolInput = Console.ReadLine();
-                        ProtocolType searchProtocol;
 
-                        if (Enum.TryParse(protocolInput, true, out searchProtocol))
+                        try
                         {
+                            ProtocolType searchProtocol = (ProtocolType)Enum.Parse(typeof(ProtocolType), protocolInput, true);
                             DateTime maxTrafficDate = analyzer.DayWithMaxTraffic(searchProtocol);
                             Console.WriteLine($"Наибольший трафик по протоколу {searchProtocol} был в день {maxTrafficDate.ToShortDateString()}");
                         }
-                        else
+                        catch (InternetTrafficException)
                         {
                             Console.WriteLine("Некорректный протокол. Пожалуйста, используйте одно из значений: HTTP, FTP, Torrent, IPTV");
                         }
@@ -166,6 +167,7 @@ namespace ConsoleApp6
                         Console.ReadLine();
                         Console.Clear();
                         break;
+
 
                     case "4":
                         DisplayTrafficData(trafficData);

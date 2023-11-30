@@ -21,7 +21,7 @@ namespace ClassLibrary6
         /// <summary>
         /// Класс для хранения данных о интернет-трафике.
         /// </summary>
-        public class InternetTraffic
+        public struct InternetTraffic
         {
             /// <summary>
             /// Дата использования трафика.
@@ -55,7 +55,7 @@ namespace ClassLibrary6
         /// <summary>
         /// Класс для анализа интернет-трафика.
         /// </summary>
-        public class TrafficAnalyzer
+        public struct TrafficAnalyzer
         {
             private InternetTraffic[] _trafficData;
 
