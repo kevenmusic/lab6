@@ -57,7 +57,7 @@ namespace ClassLibrary6
         /// </summary>
         public struct TrafficAnalyzer
         {
-            private InternetTraffic[] _trafficData;
+            public InternetTraffic[] trafficData;
 
             /// <summary>
             /// Конструктор для создания экземпляра класса TrafficAnalyzer.
@@ -65,7 +65,7 @@ namespace ClassLibrary6
             /// <param name="data">Массив данных о интернет-трафике.</param>
             public TrafficAnalyzer(InternetTraffic[] data)
             {
-                _trafficData = data;
+                trafficData = data;
             }
 
             /// <summary>
@@ -77,7 +77,7 @@ namespace ClassLibrary6
             {
                 double totalTraffic = 0;
 
-                foreach (InternetTraffic traffic in _trafficData)
+                foreach (InternetTraffic traffic in trafficData)
                 {
                     if (traffic.Date == specifiedDate)
                     {
@@ -105,7 +105,7 @@ namespace ClassLibrary6
                     throw new InternetTrafficException("Конечная дата не может быть раньше начальной даты.");
                 }
 
-                foreach (InternetTraffic traffic in _trafficData)
+                foreach (InternetTraffic traffic in trafficData)
                 {
                     if (traffic.Protocol == protocol && traffic.Date >= startDate && traffic.Date <= endDate)
                     {
@@ -127,7 +127,7 @@ namespace ClassLibrary6
                 DateTime maxTrafficDate = DateTime.MinValue;
                 double maxTraffic = 0;
 
-                foreach (InternetTraffic traffic in _trafficData)
+                foreach (InternetTraffic traffic in trafficData)
                 {
                     if (traffic.Protocol == protocol && traffic.TrafficUsage > maxTraffic)
                     {

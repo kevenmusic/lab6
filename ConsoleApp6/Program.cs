@@ -6,23 +6,13 @@ namespace ConsoleApp6
 {
     internal class Program
     {
-        private static void DisplayTrafficData(InternetTraffic[] trafficData)
-        {
-            Console.WriteLine("Отображение введенных данных:");
-            Console.WriteLine("|" + new string('-', 55) + "|");
-            foreach (var data in trafficData)
-            {
-                Console.WriteLine($"| Дата: {data.Date.ToShortDateString()} | Протокол: {data.Protocol, -7} | Трафик: {data.TrafficUsage, -3} МБ |");
-            }
-            Console.WriteLine("|" + new string('-', 55) + "|");
-        }
-
         static void Main(string[] args)
         {
           InternetTraffic[] trafficData = new InternetTraffic[]
           {
                 new InternetTraffic(new DateTime(2023, 11, 5), ProtocolType.HTTP, 100),
                 new InternetTraffic(new DateTime(2023, 11, 6), ProtocolType.FTP, 50),
+                new InternetTraffic(new DateTime(2023, 12, 4), ProtocolType.FTP, 250),
                 new InternetTraffic(new DateTime(2023, 11, 6    ), ProtocolType.HTTP, 200),
                 new InternetTraffic(new DateTime(2023, 11, 20), ProtocolType.Torrent, 250),
                 new InternetTraffic(new DateTime(2023, 10, 20), ProtocolType.Torrent, 120),
@@ -187,5 +177,16 @@ namespace ConsoleApp6
                 Console.WriteLine();
             }
         }
+        private static void DisplayTrafficData(InternetTraffic[] trafficData)
+        {
+            Console.WriteLine("Отображение введенных данных:");
+            Console.WriteLine("|" + new string('-', 55) + "|");
+            foreach (var data in trafficData)
+            {
+                Console.WriteLine($"| Дата: {data.Date.ToShortDateString()} | Протокол: {data.Protocol,-7} | Трафик: {data.TrafficUsage,-3} МБ |");
+            }
+            Console.WriteLine("|" + new string('-', 55) + "|");
+        }
+
     }
 }
